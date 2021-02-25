@@ -97,7 +97,6 @@ describe('microTask', () => {
         const done = new Promise<void>(resolve => {
 
             setTimeout(() => {
-
                 result.push(5);
                 resolve();
             }, 0);
@@ -136,7 +135,7 @@ describe('task', () => {
         // task should run *after* microtasks
         expect(result).to.equal(false);
 
-        // await the microtask
+        // await the task
         await done;
 
         // result should be updated
@@ -171,7 +170,6 @@ describe('task', () => {
         const done = new Promise<void>(resolve => {
 
             setTimeout(() => {
-
                 result.push(5);
                 resolve();
             }, 0);
@@ -194,23 +192,27 @@ xdescribe('animationtask', () => {
 
         let result = false;
 
-        // schedule a microtask
+        // schedule an animationtask
         const { done } = animationtask(() => {
 
             result = true;
         });
 
-        // task should run *after* synchronous code
+        // animationtask should run *after* synchronous code
         expect(result).to.equal(false);
 
         await Promise.resolve().then(() => {
             // wait a microtask
         });
 
-        // task should run *after* microtasks
+        // animationtask should run *after* microtasks
         expect(result).to.equal(false);
 
-        // await the microtask
+        // we can't predict if the animationFrame will trigger
+        // after the next task - scheduling depends on browser
+        // and tests could be flaky
+
+        // await the animationtask
         await done;
 
         // result should be updated
@@ -255,4 +257,9 @@ xdescribe('animationtask', () => {
 
     //     expect(result).to.eql([0, 1, 3, 4, 2, 5]);
     // });
+
+    it('should be cancellable', async () => {
+
+        await assertTaskCancellation(animationtask);
+    });
 });
