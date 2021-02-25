@@ -1,0 +1,10 @@
+{
+    "root": true,
+    "extends": ["@partkit"],
+    "ignorePatterns": [
+      "dist"
+    ],
+    "rules": {
+      "import/no-unresolved": "off"
+    }
+}
