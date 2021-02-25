@@ -1,21 +1,50 @@
 import { expect } from 'chai';
-import { animationtask, microtask, task, TaskScheduler } from '../../src/tasks/tasks';
+import { animationtask, microtask, task, TaskCancellation, TaskScheduler } from '../../src/tasks/tasks';
 
-const assertTaskResult = async (scheduler: TaskScheduler<unknown>): Promise<void> => {
+const assertTaskResult = async (scheduler: TaskScheduler): Promise<void> => {
 
     let result: unknown;
 
-    result = await scheduler(() => true);
+    result = await scheduler(() => true).done;
     expect(result).to.equal(true);
 
-    result = await scheduler(() => Promise.resolve().then(() => 'false'));
+    result = await scheduler(() => Promise.resolve().then(() => 'false')).done;
     expect(result).to.equal('false');
 
-    result = await scheduler(() => { /* not returning anything... */ });
+    result = await scheduler(() => { /* not returning anything... */ }).done;
     expect(result).to.equal(undefined);
 
-    result = await scheduler(() => Promise.resolve().then(() => { /* not returning anything... */ }));
+    result = await scheduler(() => Promise.resolve().then(() => { /* not returning anything... */ })).done;
     expect(result).to.equal(undefined);
+};
+
+const assertTaskCancellation = async (scheduler: TaskScheduler): Promise<void> => {
+
+    let executed = false;
+    let error: unknown;
+
+    const { done, cancel } = scheduler(() => true);
+
+    done.then(
+        value => executed = value as boolean,
+        reason => error = reason as unknown,
+    );
+
+    cancel();
+
+    try {
+
+        await done;
+
+    } catch (err) {
+
+        expect(err instanceof TaskCancellation).to.equal(true);
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(executed).to.equal(false);
+    expect(error instanceof TaskCancellation).to.equal(true);
 };
 
 describe('microTask', () => {
@@ -25,7 +54,7 @@ describe('microTask', () => {
         let result = false;
 
         // schedule a microtask
-        const taskFinished = microtask(() => {
+        const { done } = microtask(() => {
 
             result = true;
         });
@@ -34,7 +63,7 @@ describe('microTask', () => {
         expect(result).to.equal(false);
 
         // await the microtask
-        await taskFinished;
+        await done;
 
         // result should be updated
         expect(result).to.equal(true);
@@ -78,6 +107,11 @@ describe('microTask', () => {
 
         expect(result).to.eql([0, 1, 2, 3, 4, 5]);
     });
+
+    it('should be cancellable', async () => {
+
+        await assertTaskCancellation(microtask);
+    });
 });
 
 describe('task', () => {
@@ -87,7 +121,7 @@ describe('task', () => {
         let result = false;
 
         // schedule a task
-        const taskFinished = task(() => {
+        const { done } = task(() => {
 
             result = true;
         });
@@ -103,7 +137,7 @@ describe('task', () => {
         expect(result).to.equal(false);
 
         // await the microtask
-        await taskFinished;
+        await done;
 
         // result should be updated
         expect(result).to.equal(true);
@@ -147,6 +181,11 @@ describe('task', () => {
 
         expect(result).to.eql([0, 1, 3, 4, 2, 5]);
     });
+
+    it('should be cancellable', async () => {
+
+        await assertTaskCancellation(task);
+    });
 });
 
 xdescribe('animationtask', () => {
@@ -156,7 +195,7 @@ xdescribe('animationtask', () => {
         let result = false;
 
         // schedule a microtask
-        const taskFinished = animationtask(() => {
+        const { done } = animationtask(() => {
 
             result = true;
         });
@@ -172,7 +211,7 @@ xdescribe('animationtask', () => {
         expect(result).to.equal(false);
 
         // await the microtask
-        await taskFinished;
+        await done;
 
         // result should be updated
         expect(result).to.equal(true);

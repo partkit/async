@@ -1,24 +1,62 @@
 export type TaskCallback<T> = () => T | Promise<T>;
 
-export type TaskScheduler<T = unknown> = (callback: TaskCallback<T>) => Promise<T>;
+export interface TaskReference<T = unknown> {
+    cancel: () => void;
+    done: Promise<T>;
+}
 
-// TODO: task schedulers should return a cancel function
-export const microtask = <T> (callback: TaskCallback<T>): Promise<T> => {
+export type TaskScheduler<T = unknown> = (callback: TaskCallback<T>) => TaskReference<T>;
+
+export class TaskCancellation extends Error {
+
+    name = 'TaskCancellation';
+
+    constructor (message = 'Task was cancelled.') {
+
+        super(message);
+    }
+}
+
+export const microtask = <T> (callback: TaskCallback<T>): TaskReference<T> => {
 
     let cancelled = false;
 
-    const cancel = () => cancelled = true;
-
-    return Promise.resolve().then(() => callback());
+    return {
+        cancel: () => cancelled = true,
+        done: Promise.resolve().then(() => {
+            if (cancelled) { throw new TaskCancellation('Microtask was cancelled.'); }
+            return callback();
+        }),
+    };
 };
 
-export const task = <T> (callback: TaskCallback<T>): Promise<T> => {
+export const task = <T> (callback: TaskCallback<T>): TaskReference<T> => {
 
-    return new Promise(resolve => setTimeout(() => resolve(callback()), 0));
+    let cancelled = false;
+
+    return {
+        cancel: () => cancelled = true,
+        done: new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (cancelled) { reject(new TaskCancellation('Task was cancelled.')); }
+                resolve(callback());
+            }, 0);
+        }),
+    };
 };
 
 // TODO: not in node...
-export const animationtask = <T> (callback: TaskCallback<T>): Promise<T> => {
+export const animationtask = <T> (callback: TaskCallback<T>): TaskReference<T> => {
 
-    return new Promise(resolve => requestAnimationFrame(() => resolve(callback())));
+    let cancelled = false;
+
+    return {
+        cancel: () => cancelled = true,
+        done: new Promise((resolve, reject) => {
+            requestAnimationFrame(() => {
+                if (cancelled) { reject(new TaskCancellation('Animationtask was cancelled.')); }
+                resolve(callback());
+            });
+        }),
+    };
 };
