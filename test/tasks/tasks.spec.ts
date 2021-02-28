@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { animationtask, microtask, task, TaskCancellation, TaskScheduler } from '../../src/tasks/tasks';
+import { animationtask, microtask, task, CancelError, TaskScheduler } from '../../src/tasks';
 
 const assertTaskResult = async (scheduler: TaskScheduler): Promise<void> => {
 
@@ -26,7 +26,7 @@ const assertTaskCancellation = async (scheduler: TaskScheduler): Promise<void> =
     const { done, cancel } = scheduler(() => true);
 
     done.then(
-        value => executed = value as boolean,
+        value => executed = value,
         reason => error = reason as unknown,
     );
 
@@ -38,16 +38,16 @@ const assertTaskCancellation = async (scheduler: TaskScheduler): Promise<void> =
 
     } catch (err) {
 
-        expect(err instanceof TaskCancellation).to.equal(true);
+        expect(err instanceof CancelError).to.equal(true);
     }
 
     await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(executed).to.equal(false);
-    expect(error instanceof TaskCancellation).to.equal(true);
+    expect(error instanceof CancelError).to.equal(true);
 };
 
-describe('microTask', () => {
+describe('microtask', () => {
 
     it('should schedule a microtask', async () => {
 
