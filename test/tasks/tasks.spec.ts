@@ -21,30 +21,47 @@ const assertTaskResult = async (scheduler: TaskScheduler): Promise<void> => {
 const assertTaskCancellation = async (scheduler: TaskScheduler): Promise<void> => {
 
     let executed = false;
+    let caught = false;
     let error: unknown;
 
-    const { done, cancel } = scheduler(() => true);
+    let { done, cancel } = scheduler(() => true);
 
-    done.then(
+    let doneOrCancelled = done.then(
         value => executed = value,
         reason => error = reason as unknown,
     );
 
-    cancel();
-
     try {
 
+        cancel();
         await done;
 
     } catch (err) {
 
-        expect(err instanceof CancelError).to.equal(true);
+        caught = true;
     }
 
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await doneOrCancelled;
 
     expect(executed).to.equal(false);
+    expect(caught).to.equal(true);
     expect(error instanceof CancelError).to.equal(true);
+
+    // test cancellation with custom error
+
+    ({ done, cancel } = scheduler(() => true));
+
+    doneOrCancelled = done.then(
+        value => executed = value,
+        reason => error = reason as unknown,
+    );
+
+    cancel('cancellation reason');
+
+    await doneOrCancelled;
+
+    expect(executed).to.equal(false);
+    expect(error).to.equal('cancellation reason');
 };
 
 describe('microtask', () => {
