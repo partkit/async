@@ -1,21 +1,25 @@
 import { CancelError } from '../../cancellation';
 import { TaskScheduler, TaskCallback, TaskReference } from '../types';
 
-export const task: TaskScheduler = <T> (callback: TaskCallback<T>): TaskReference<T> => {
+export const task: TaskScheduler = <T> (callback: TaskCallback<T>, signal?: AbortSignal): TaskReference<T> => {
 
+    let rejectDone: (reason?: unknown) => void;
+    let handle: ReturnType<typeof setTimeout>;
     let cancelled = false;
-    let cancelReason: unknown;
 
-    return {
-        cancel: (reason?: unknown) => {
-            cancelled = true;
-            cancelReason = reason;
-        },
-        done: new Promise((resolve, reject) => {
-            setTimeout(() => {
-                if (cancelled) { reject(cancelReason ?? new CancelError('Task was cancelled.')); }
-                resolve(callback());
-            }, 0);
-        }),
+    const cancel = (reason?: unknown) => {
+        if (cancelled) return;
+        cancelled = true;
+        clearTimeout(handle);
+        rejectDone(reason ?? new CancelError('Task was cancelled.'));
     };
+
+    const done = new Promise<T>((resolve, reject) => {
+        rejectDone = reject;
+        handle = setTimeout(() => resolve(callback()), 0);
+    });
+
+    signal?.addEventListener('abort', () => cancel());
+
+    return { cancel, done };
 };

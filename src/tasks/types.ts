@@ -7,4 +7,4 @@ export interface TaskReference<T = unknown> {
 
 export type TaskCallback<T> = () => T | Promise<T>;
 
-export type TaskScheduler = <T = unknown>(callback: TaskCallback<T>) => TaskReference<T>;
+export type TaskScheduler = <T = unknown>(callback: TaskCallback<T>, signal?: AbortSignal) => TaskReference<T>;
