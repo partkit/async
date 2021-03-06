@@ -20,13 +20,22 @@ const assertTaskResult = async (scheduler: TaskScheduler): Promise<void> => {
 
 const assertTaskCancellation = async (scheduler: TaskScheduler): Promise<void> => {
 
+    await cancelTask(scheduler);
+    await cancelTaskWithCustomError(scheduler);
+    await cancelTaskWithAbortSignal(scheduler);
+    await cancelTaskMultipleTimes(scheduler);
+    await cancelTaskAfterCompletion(scheduler);
+};
+
+const cancelTask = async (scheduler: TaskScheduler): Promise<void> => {
+
     let executed = false;
     let caught = false;
     let error: unknown;
 
-    let { done, cancel } = scheduler(() => true);
+    const { cancel, done } = scheduler(() => true);
 
-    let doneOrCancelled = done.then(
+    const doneOrCancelled = done.then(
         value => executed = value,
         reason => error = reason as unknown,
     );
@@ -43,15 +52,19 @@ const assertTaskCancellation = async (scheduler: TaskScheduler): Promise<void> =
 
     await doneOrCancelled;
 
-    expect(executed).to.equal(false);
-    expect(caught).to.equal(true);
-    expect(error instanceof CancelError).to.equal(true);
+    expect(executed).to.equal(false, 'Cancelled task should not resolve with a result');
+    expect(caught).to.equal(true, 'Awaiting a cancelled task should throw');
+    expect(error instanceof CancelError).to.equal(true, 'Cancelled task should reject with CancelError');
+};
 
-    // test cancellation with custom error
+const cancelTaskWithCustomError = async (scheduler: TaskScheduler): Promise<void> => {
 
-    ({ done, cancel } = scheduler(() => true));
+    let executed = false;
+    let error: unknown;
 
-    doneOrCancelled = done.then(
+    const { cancel, done } = scheduler(() => true);
+
+    const doneOrCancelled = done.then(
         value => executed = value,
         reason => error = reason as unknown,
     );
@@ -60,8 +73,86 @@ const assertTaskCancellation = async (scheduler: TaskScheduler): Promise<void> =
 
     await doneOrCancelled;
 
-    expect(executed).to.equal(false);
-    expect(error).to.equal('cancellation reason');
+    expect(executed).to.equal(false, 'Cancelled task should not resolve with a result');
+    expect(error).to.equal('cancellation reason', 'Cancelled task should reject with provided reason');
+};
+
+const cancelTaskWithAbortSignal = async (scheduler: TaskScheduler): Promise<void> => {
+
+    let executed = false;
+    let error: unknown;
+
+    const controller = new AbortController();
+
+    const { done } = scheduler(() => true, controller.signal);
+
+    const doneOrCancelled = done.then(
+        value => executed = value,
+        reason => error = reason as unknown,
+    );
+
+    controller.abort();
+
+    await doneOrCancelled;
+
+    expect(executed).to.equal(false, 'Cancelled task should not resolve with a result');
+    expect(error instanceof CancelError).to.equal(true, 'Cancelled task should reject with CancelError');
+};
+
+const cancelTaskMultipleTimes = async (scheduler: TaskScheduler): Promise<void> => {
+
+    let executed = false;
+    let error: unknown;
+
+    const controller = new AbortController();
+
+    const { cancel, done } = scheduler(() => true, controller.signal);
+
+    const doneOrCancelled = done.then(
+        value => executed = value,
+        reason => error = reason as unknown,
+    );
+
+    cancel('first cancellation');
+    cancel('second cancellation');
+    controller.abort();
+
+    await doneOrCancelled;
+
+    expect(executed).to.equal(false, 'Cancelled task should not resolve with a result');
+    // cancellation should happen only once, consecutive cancellations shouldn't have any effect
+    expect(error).to.equal('first cancellation', 'Task cancellation should happen only once');
+
+    await done.catch(reason => expect(reason).to.equal(
+        'first cancellation',
+        'Cancelled task should be rejected with first cancellation reason',
+    ));
+};
+
+const cancelTaskAfterCompletion = async (scheduler: TaskScheduler): Promise<void> => {
+
+    let executed = false;
+    let error: unknown;
+
+    const controller = new AbortController();
+
+    const { cancel, done } = scheduler(() => true, controller.signal);
+
+    const doneOrCancelled = done.then(
+        value => executed = value,
+        reason => error = reason as unknown,
+    );
+
+    // we let the task complete first
+    await doneOrCancelled;
+
+    cancel('first cancellation');
+    controller.abort();
+    cancel('second cancellation');
+
+    expect(executed).to.equal(true, 'Non-cancelled task should resolve with result');
+    // once a task is completed, cancellations shouldn't have any effect
+    expect(error).to.equal(undefined, 'Completed task should not be cancellable');
 };
 
 describe('microtask', () => {
@@ -241,39 +332,39 @@ xdescribe('animationtask', () => {
         await assertTaskResult(animationtask);
     });
 
-    // it('should execute task in expected order', async () => {
+    it('should execute task in expected order', async () => {
 
-    //     const result: number[] = [];
+        const result: number[] = [];
 
-    //     // schedule a task
-    //     setTimeout(() => result.push(4), 0);
+        // schedule a task
+        setTimeout(() => result.push(4), 0);
 
-    //     // schedule a microtask
-    //     void Promise.resolve().then(() => result.push(1));
+        // schedule a microtask
+        void Promise.resolve().then(() => result.push(1));
 
-    //     // schedule a task with the function under test
-    //     void task(() => result.push(2));
+        // schedule a task with the function under test
+        void task(() => result.push(2));
 
-    //     // schedule another microtask
-    //     void Promise.resolve().then(() => result.push(3));
+        // schedule another microtask
+        void Promise.resolve().then(() => result.push(3));
 
-    //     // run this synchronously
-    //     result.push(0);
+        // run this synchronously
+        result.push(0);
 
-    //     // schedule a final task which should complete last
-    //     const done = new Promise<void>(resolve => {
+        // schedule a final task which should complete last
+        const done = new Promise<void>(resolve => {
 
-    //         setTimeout(() => {
+            setTimeout(() => {
 
-    //             result.push(5);
-    //             resolve();
-    //         }, 0);
-    //     });
+                result.push(5);
+                resolve();
+            }, 0);
+        });
 
-    //     await done;
+        await done;
 
-    //     expect(result).to.eql([0, 1, 3, 4, 2, 5]);
-    // });
+        expect(result).to.eql([0, 1, 3, 4, 2, 5]);
+    });
 
     it('should be cancellable', async () => {
 
