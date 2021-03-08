@@ -27,6 +27,8 @@ export const subscribe = <T, TReturn, TNext> (
 
             if (result.done) { return result.value; }
 
+            // by awaiting the callback result, we enable backpressure, meaning we only
+            // ask for the next stream value, once we've processed the current one
             next = await callback(result.value);
         }
     };
