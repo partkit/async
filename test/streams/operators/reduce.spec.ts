@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { expect } from 'chai';
 import { CancelError, subscribe } from '../../../src/streams';
 import { asyncReduce } from '../../../src/streams/operators/async-reduce';
