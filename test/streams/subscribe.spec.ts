@@ -137,6 +137,27 @@ describe('subscribe', () => {
         expect(duration > 2 * count * delay).to.equal(true);
     });
 
+    it('should throw error from callback on the stream', async () => {
+
+        const count = 5;
+        const delay = 2;
+        let error!: Error;
+
+        const { done } = subscribe(stream(count, delay), () => { throw new Error('CallbackError'); });
+
+        try {
+
+            await done;
+
+        } catch (err) {
+
+            error = err as Error;
+        }
+
+        expect(error).to.be.instanceOf(Error);
+        expect(error.message).to.equal('CallbackError');
+    });
+
     it('should resolve with the return value of the stream', async () => {
 
         const emissions: number[] = [];

@@ -29,7 +29,16 @@ export const subscribe = <T, TReturn, TNext> (
 
             // by awaiting the callback result, we enable backpressure, meaning we only
             // ask for the next stream value, once we've processed the current one
-            next = await callback(result.value);
+            try {
+
+                next = await callback(result.value);
+
+            } catch (error) {
+
+                // when an error occurrs in the subscription callback, we throw it on
+                // the stream to make sure the stream is ended and reject this runner
+                await stream.throw(error);
+            }
         }
     };
 
