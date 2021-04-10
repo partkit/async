@@ -1,4 +1,4 @@
-import { CancelCallback } from '../cancellation';
+import { CancelCallback } from '../cancellation/index.js';
 
 export interface TaskReference<T = unknown> {
     cancel: CancelCallback;

@@ -1,5 +1,5 @@
-import { CancelError } from '../cancellation';
-import { Stream, StreamCallback, Subscription } from './types';
+import { CancelError } from '../cancellation/index.js';
+import { Stream, StreamCallback, Subscription } from './types.js';
 
 export const subscribe = <T, TReturn, TNext> (
     stream: Stream<T, TReturn, TNext>,

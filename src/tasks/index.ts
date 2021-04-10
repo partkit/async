@@ -1,3 +1,3 @@
-export * from '../cancellation';
-export * from './schedulers';
-export * from './types';
+export * from '../cancellation/index.js';
+export * from './schedulers/index.js';
+export * from './types.js';

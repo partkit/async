@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Stream } from './types';
+import { Stream } from './types.js';
 
 export const QUEUE_SIZE_ERROR = (maxSize: number): Error =>
     new Error(`asyncQueue: Maximum queue size reached: ${ maxSize }`);

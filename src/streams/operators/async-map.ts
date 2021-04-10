@@ -1,4 +1,4 @@
-import { AsyncOperator, Awaitable } from './types';
+import { AsyncOperator, Awaitable } from './types.js';
 
 export type Transformer<T = unknown, U = T> = (value: T) => Awaitable<U>;
 

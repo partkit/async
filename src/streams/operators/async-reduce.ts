@@ -1,4 +1,4 @@
-import { AsyncOperator, Awaitable } from './types';
+import { AsyncOperator, Awaitable } from './types.js';
 
 export type Reducer<T = unknown, U = T> = (value: T, accumulator: U) => Awaitable<U>;
 

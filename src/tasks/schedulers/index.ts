@@ -1,3 +1,3 @@
-export * from './microtask';
-export * from './task';
-export * from './animationtask';
+export * from './microtask.js';
+export * from './task.js';
+export * from './animationtask.js';

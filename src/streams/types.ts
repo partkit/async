@@ -1,4 +1,4 @@
-import { CancelCallback } from '../cancellation';
+import { CancelCallback } from '../cancellation/index.js';
 
 export type Stream<T = unknown, TReturn = unknown, TNext = unknown> = AsyncGenerator<T, TReturn, TNext>;
 

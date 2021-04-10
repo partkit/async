@@ -1,4 +1,4 @@
-import { AsyncOperator, Awaitable } from './types';
+import { AsyncOperator, Awaitable } from './types.js';
 
 export type Filter<T = unknown> = (value: T) => Awaitable<boolean>;
 

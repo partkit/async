@@ -1,4 +1,4 @@
-import { AsyncOperator } from './types';
+import { AsyncOperator } from './types.js';
 
 export function compose<T, U> (
     stream: AsyncIterable<T>,

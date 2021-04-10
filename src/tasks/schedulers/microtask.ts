@@ -1,5 +1,5 @@
-import { CancelError } from '../../cancellation';
-import { TaskScheduler, TaskCallback, TaskReference } from '../types';
+import { CancelError } from '../../cancellation/index.js';
+import { TaskScheduler, TaskCallback, TaskReference } from '../types.js';
 
 export const microtask: TaskScheduler = <T> (callback: TaskCallback<T>, signal?: AbortSignal): TaskReference<T> => {
 
