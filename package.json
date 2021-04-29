@@ -2,7 +2,22 @@
   "name": "@partkit/async",
   "version": "0.0.1",
   "description": "A library for async helpers.",
-  "main": "index.js",
+  "type": "module",
+  "exports": {
+    ".": "./dist/src/index.js",
+    "./cancellation": "./dist/src/cancellation/index.js",
+    "./cancellation/*": "./dist/src/cancellation/*.js",
+    "./streams": "./dist/src/streams/index.js",
+    "./streams/*": "./dist/src/streams/*.js",
+    "./tasks": "./dist/src/tasks/index.js",
+    "./tasks/*": "./dist/src/tasks/*.js"
+  },
+  "main": "./dist/src/index.js",
+  "module": "dist/src/index.js",
+  "files": [
+    "./dist/src",
+    "./src/"
+  ],
   "scripts": {
     "clean": "rm -rf ./dist",
     "prebuild": "npm run clean",
@@ -20,7 +35,9 @@
   "keywords": [
     "async",
     "task",
-    "microtask"
+    "microtask",
+    "stream",
+    "generator"
   ],
   "author": "Alexander Wende",
   "license": "BSD-3-Clause",
