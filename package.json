@@ -15,8 +15,8 @@
   "main": "./dist/src/index.js",
   "module": "dist/src/index.js",
   "files": [
-    "./dist/src",
-    "./src/"
+    "/dist/src",
+    "/src/"
   ],
   "scripts": {
     "clean": "rm -rf ./dist",
