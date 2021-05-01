@@ -1,8 +1,6 @@
 import { expect } from 'chai';
-import { asyncQueue, CancelError, delay, subscribe, task } from '../../../src/index.js';
-import { asyncDebounce } from '../../../src/streams/operators/async-debounce.js';
+import { asyncDebounce, asyncQueue, CancelError, delay, subscribe } from '../../../src/index.js';
 import { stream } from '../stream.js';
-
 
 describe('debounce', () => {
 
