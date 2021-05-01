@@ -1,25 +1,12 @@
 {
-  "cache": false,
-  "check-coverage": false,
-  "extension": [
-    ".ts"
-  ],
   "include": [
-    "src/**/*.js",
-    "src/**/*.ts"
+    "dist/src/**/*.js"
   ],
   "exclude": [
-    "coverage/**",
-    "dist/**",
-    "node_modules/**",
-    "**/*.d.ts",
-    "**/*.spec.ts"
+    "**/*.spec.js"
   ],
-  "sourceMap": true,
   "reporter": [
     "html",
     "text"
-  ],
-  "all": true,
-  "instrument": true
+  ]
 }

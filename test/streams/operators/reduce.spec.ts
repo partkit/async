@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { expect } from 'chai';
-import { CancelError, subscribe } from '../../../src/streams';
-import { asyncReduce } from '../../../src/streams/operators/async-reduce';
-import { stream } from '../stream';
+import { asyncReduce, CancelError, subscribe } from '../../../src/streams/index.js';
+import { stream } from '../stream.js';
 
 describe('reduce', () => {
 

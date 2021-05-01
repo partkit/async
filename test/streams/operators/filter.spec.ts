@@ -1,7 +1,6 @@
 import { expect } from 'chai';
-import { CancelError, subscribe } from '../../../src/streams';
-import { asyncFilter } from '../../../src/streams/operators/async-filter';
-import { stream } from '../stream';
+import { asyncFilter, CancelError, subscribe } from '../../../src/streams/index.js';
+import { stream } from '../stream.js';
 
 describe('filter', () => {
 

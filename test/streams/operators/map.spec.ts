@@ -1,7 +1,6 @@
 import { expect } from 'chai';
-import { CancelError, subscribe } from '../../../src/streams';
-import { asyncMap } from '../../../src/streams/operators/async-map';
-import { stream } from '../stream';
+import { asyncMap, CancelError, subscribe } from '../../../src/streams/index.js';
+import { stream } from '../stream.js';
 
 const ENABLE_LOGS = false;
 

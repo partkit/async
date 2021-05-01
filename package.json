@@ -19,13 +19,13 @@
     "/src/"
   ],
   "scripts": {
-    "clean": "rm -rf ./dist",
+    "clean": "rm -rf ./dist ./coverage ./.nyc_output",
     "prebuild": "npm run clean",
     "build": "tsc",
     "build:watch": "npm run build -- --watch",
     "lint": "eslint \"src/**\"",
     "lint:fix": "eslint \"src/**\" --fix",
-    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' nyc mocha",
+    "test": "nyc mocha",
     "test:watch": "npm run test -- --watch"
   },
   "repository": {

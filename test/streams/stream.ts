@@ -1,4 +1,4 @@
-import { logger } from '../../src/log';
+import { logger } from '../../src/log.js';
 
 export async function* stream (max = 5, delay = 2, logs = false): AsyncGenerator<number, boolean> {
 

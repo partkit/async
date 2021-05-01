@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { animationtask, microtask, task, CancelError, TaskScheduler } from '../../src/tasks';
+import { animationtask, microtask, task, CancelError, TaskScheduler } from '../../src/tasks/index.js';
 
 const assertTaskResult = async (scheduler: TaskScheduler): Promise<void> => {
 

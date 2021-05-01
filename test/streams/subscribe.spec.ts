@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { CancelError } from '../../src/cancellation';
-import { subscribe } from '../../src/streams';
+import { CancelError } from '../../src/cancellation/index.js';
+import { subscribe } from '../../src/streams/index.js';
 
 describe('subscribe', () => {
 
