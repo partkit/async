@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3](https://github.com/partkit/async/compare/v0.0.2...v0.0.3) (2021-05-02)
+
+
+### Bug Fixes
+
+* don't package tsconfig.json for npm ([a47c55d](https://github.com/partkit/async/commit/a47c55da5e5697cbd4c725b3d02a832497dfb803))
+
 ### 0.0.2 (2021-05-01)
 
 
