@@ -16,7 +16,7 @@
   "module": "dist/src/index.js",
   "files": [
     "/dist/src",
-    "/src/"
+    "/src/**/*.ts"
   ],
   "scripts": {
     "clean": "rimraf ./.nyc_output ./coverage ./dist",
