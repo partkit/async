@@ -4,18 +4,18 @@
   "description": "A library for async helpers.",
   "type": "module",
   "exports": {
-    ".": "./dist/src/index.js",
-    "./cancellation": "./dist/src/cancellation/index.js",
-    "./cancellation/*": "./dist/src/cancellation/*.js",
-    "./streams": "./dist/src/streams/index.js",
-    "./streams/*": "./dist/src/streams/*.js",
-    "./tasks": "./dist/src/tasks/index.js",
-    "./tasks/*": "./dist/src/tasks/*.js"
+    ".": "./dist/index.js",
+    "./cancellation": "./dist/cancellation/index.js",
+    "./cancellation/*": "./dist/cancellation/*.js",
+    "./streams": "./dist/streams/index.js",
+    "./streams/*": "./dist/streams/*.js",
+    "./tasks": "./dist/tasks/index.js",
+    "./tasks/*": "./dist/tasks/*.js"
   },
-  "main": "./dist/src/index.js",
-  "module": "dist/src/index.js",
+  "main": "./dist/index.js",
+  "module": "dist/index.js",
   "files": [
-    "/dist/src",
+    "/dist",
     "/src/**/*.ts"
   ],
   "scripts": {
@@ -23,11 +23,12 @@
     "prebuild": "npm run clean",
     "build": "tsc",
     "build:watch": "npm run build -- --watch",
+    "build:prod": "npm run build -- --project tsconfig.prod.json",
     "lint": "eslint 'src/**/*.ts' 'test/**/*.ts'",
     "lint:fix": "eslint 'src/**/*.ts' 'test/**/*.ts' --fix",
     "test": "nyc mocha",
     "test:watch": "npm run test -- --watch",
-    "prerelease": "npm-run-all lint build test",
+    "prerelease": "npm-run-all lint build test build:prod",
     "release": "standard-version",
     "release:minor": "npm run release -- --release-as minor",
     "release:major": "npm run release -- --release-as major",
