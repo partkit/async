@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/partkit/async/compare/v0.0.4...v0.0.5) (2021-12-25)
+
+
+### Features
+
+* add signaltask ([e9341e1](https://github.com/partkit/async/commit/e9341e10f1246e52d0b323abe354675cbb2c3303))
+
+
+### Bug Fixes
+
+* remove multiple exports of cancellation package ([148697e](https://github.com/partkit/async/commit/148697e756d5b8376e10a140d5459a87e656e6f2))
+
 ### [0.0.4](https://github.com/partkit/async/compare/v0.0.3...v0.0.4) (2021-06-02)
 
 ### [0.0.3](https://github.com/partkit/async/compare/v0.0.2...v0.0.3) (2021-05-02)
