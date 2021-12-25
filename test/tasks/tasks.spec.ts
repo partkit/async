@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { animationtask, microtask, task, CancelError, TaskScheduler } from '../../src/tasks/index.js';
+import { animationtask, microtask, task, CancelError, TaskScheduler, signaltask, signal } from '../../src/index.js';
 
 const assertTaskResult = async (scheduler: TaskScheduler): Promise<void> => {
 
@@ -370,4 +370,121 @@ xdescribe('animationtask', () => {
 
         await assertTaskCancellation(animationtask);
     });
+});
+
+describe('signaltask', () => {
+
+    it('should schedule a signaltask', async () => {
+
+        let result = false;
+
+        const sig = signal();
+
+        // schedule a signaltask
+        const { done } = signaltask(() => result = true, sig);
+
+        // task should run *after* synchronous code
+        expect(result).to.equal(false);
+
+        // signal should be in initial state
+        expect(sig.cancelled).to.equal(false);
+        expect(sig.confirmed).to.equal(false);
+
+        // task should run once the signal confirms
+        sig.confirm();
+
+        // await the task
+        await done;
+
+        // result should be updated
+        expect(result).to.equal(true);
+
+        // signal should be in correct state
+        expect(sig.cancelled).to.equal(false);
+        expect(sig.confirmed).to.equal(true);
+    });
+
+    it('should be cancellable', async () => {
+
+        let result = false;
+        let error: unknown;
+
+        const sig = signal();
+
+        // schedule a signaltask
+        const { done, cancel } = signaltask(() => result = true, sig);
+
+        // task should run *after* synchronous code
+        expect(result).to.equal(false);
+
+        // signal should be in initial state
+        expect(sig.cancelled).to.equal(false);
+        expect(sig.confirmed).to.equal(false);
+
+        cancel();
+
+        try {
+
+            // cancelled task should not run once the signal confirms
+            sig.confirm();
+
+            // await the task
+            await done;
+
+        } catch (err) {
+
+            error = err;
+        }
+
+        // result should not be updated
+        expect(result).to.equal(false);
+        expect(error).to.be.instanceOf(CancelError);
+
+        // signal should be in correct state
+        expect(sig.cancelled).to.equal(false);
+        expect(sig.confirmed).to.equal(true);
+    });
+
+    it('should cancel a signaltask', async () => {
+
+        let result = false;
+        let error: unknown;
+
+        const sig = signal();
+
+        // schedule a signaltask
+        const { done } = signaltask(() => result = true, sig);
+
+        // task should run *after* synchronous code
+        expect(result).to.equal(false);
+
+        // signal should be in initial state
+        expect(sig.cancelled).to.equal(false);
+        expect(sig.confirmed).to.equal(false);
+
+        sig.cancel();
+
+        try {
+
+            // cancelled task should not run once the signal confirms
+            sig.confirm();
+
+            // await the task
+            await done;
+
+        } catch (err) {
+
+            error = err;
+        }
+
+        // result should not be updated
+        expect(result).to.equal(false);
+        expect(error).to.be.instanceOf(CancelError);
+
+        // signal should be in correct state
+        expect(sig.cancelled).to.equal(true);
+        expect(sig.confirmed).to.equal(false);
+    });
+
+    // TODO: test task callback return value resolving the task
 });
