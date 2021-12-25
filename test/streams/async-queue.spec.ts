@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { asyncQueue, CancelError, subscribe } from '../../src/streams/index.js';
+import { asyncQueue, CancelError, subscribe } from '../../src/index.js';
 
 describe('asyncQueue', () => {
 

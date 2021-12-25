@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { asyncMap, CancelError, subscribe } from '../../../src/streams/index.js';
+import { asyncMap, CancelError, subscribe } from '../../../src/index.js';
 import { stream } from '../stream.js';
 
 const ENABLE_LOGS = false;

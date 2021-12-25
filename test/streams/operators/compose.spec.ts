@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { CancelError, compose, filter, map, subscribe } from '../../../src/streams/index.js';
+import { CancelError, compose, filter, map, subscribe } from '../../../src/index.js';
 import { stream } from '../stream.js';
 
 const ENABLE_LOGS = false;

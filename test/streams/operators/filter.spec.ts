@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { asyncFilter, CancelError, subscribe } from '../../../src/streams/index.js';
+import { asyncFilter, CancelError, subscribe } from '../../../src/index.js';
 import { stream } from '../stream.js';
 
 describe('filter', () => {
