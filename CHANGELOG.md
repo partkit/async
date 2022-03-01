@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/partkit/async/compare/v0.0.5...v0.0.6) (2022-03-01)
+
+
+### Features
+
+* **tasks:** add safe `cancelTask` helper ([115bf97](https://github.com/partkit/async/commit/115bf97c5155f83e7caa4732e39af476bc9065be))
+
 ### [0.0.5](https://github.com/partkit/async/compare/v0.0.4...v0.0.5) (2021-12-25)
 
 
